@@ -16,9 +16,10 @@ public class Anjay2 extends SpeedMode {
 
     public void onMotion() {
         if (mc.thePlayer.onGround) {
-            mc.thePlayer.motionY = 0.39999992F;
+            mc.thePlayer.motionY = 0.29999992F;
             mc.thePlayer.motionX *= 1.5451F;
             mc.thePlayer.motionZ *= 1.5451F;
+            MovementUtils.strafe ( 0.329999912F );
         }
         MovementUtils.strafe();
     }
@@ -29,8 +30,5 @@ public class Anjay2 extends SpeedMode {
 
     @Override
     public void onMove(MoveEvent event) {
-        if (mc.thePlayer.onGround) {
-            MovementUtils.strafe ( 0.239999912F );
-        }
     }
 }

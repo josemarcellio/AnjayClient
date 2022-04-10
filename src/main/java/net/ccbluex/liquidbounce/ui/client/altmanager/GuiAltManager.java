@@ -233,7 +233,7 @@ public class GuiAltManager extends GuiScreen {
                 loginButton.enabled = randomButton.enabled = false;
                 new Thread(() -> {
                     status = "§6Trying to generate an account...";
-                    LoginUtils.loginCracked(RandomUtils.randomString(RandomUtils.nextInt(5, 16)));
+                    LoginUtils.loginCracked("Anjay_" + RandomUtils.randomString(6));
                     status = "§aDone!";
                     loginButton.enabled = randomButton.enabled = true;
                     },
