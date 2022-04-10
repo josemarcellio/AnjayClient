@@ -181,7 +181,8 @@ class ModuleManager : Listenable {
                 AntiBan::class.java,
                 NoInvClose::class.java,
                 TeleportAura::class.java,
-                AutoPot::class.java
+                AutoPot::class.java,
+                AntiCheatDebugger::class.java
         )
 
         registerModule(Fucker)
