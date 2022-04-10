@@ -21,15 +21,15 @@ public class AntiCheatDebugger extends Module {
         final Packet<?> p = event.getPacket();
         if (p instanceof C0FPacketConfirmTransaction) {
             long lastPacket = System.currentTimeMillis() - lastTransaction;
-            ClientUtils.displayChatMessage("§7[§bAnjay§7] §eTransaction: " + ((C0FPacketConfirmTransaction) event.getPacket()).getWindowId()
-                    + " " + ((C0FPacketConfirmTransaction) event.getPacket()).getUid() + " " + lastPacket + "ms");
+            ClientUtils.displayChatMessage("§7[§bAnjay§7] §eC0FPacketConfirmTransaction " + ((C0FPacketConfirmTransaction) event.getPacket()).getUid()
+                    + " " + ((C0FPacketConfirmTransaction) event.getPacket()).getWindowId() + " " + lastPacket + "ms");
             this.lastTransaction = System.currentTimeMillis();
-        } else if (p instanceof C00PacketKeepAlive) {
-            long lastPacket = System.currentTimeMillis() - lastKeepAlive;
-            ClientUtils.displayChatMessage("§7[§bAnjay§7] §eKeepAlive: " + ((C00PacketKeepAlive) event.getPacket()).getKey() + " " + lastPacket + "ms");
-            this.lastKeepAlive = System.currentTimeMillis();
-        } else if (p instanceof S3FPacketCustomPayload) {
-            ClientUtils.displayChatMessage("§7[§bAnjay§7] §ePayload: " + ((S3FPacketCustomPayload) event.getPacket()).getChannelName());
+            //} else if (p instanceof C00PacketKeepAlive) {
+            // long lastPacket = System.currentTimeMillis() - lastKeepAlive;
+            // ClientUtils.displayChatMessage("§7[§bAnjay§7] §eC00PacketKeepAlive " + ((C00PacketKeepAlive) event.getPacket()).getKey() + " " + lastPacket + "ms");
+            //  this.lastKeepAlive = System.currentTimeMillis();
+            //} else if (p instanceof S3FPacketCustomPayload) {
+            //  ClientUtils.displayChatMessage("§7[§bAnjay§7] §eS3FPacketCustomPayload " + ((S3FPacketCustomPayload) event.getPacket()).getChannelName());
         }
     }
 }
