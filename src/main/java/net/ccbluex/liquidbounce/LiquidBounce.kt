@@ -12,6 +12,7 @@ import net.ccbluex.liquidbounce.features.command.CommandManager
 import net.ccbluex.liquidbounce.features.module.ModuleManager
 import net.ccbluex.liquidbounce.features.special.AntiForge
 import net.ccbluex.liquidbounce.features.special.BungeeCordSpoof
+import net.ccbluex.liquidbounce.features.special.CombatManager
 import net.ccbluex.liquidbounce.file.FileManager
 import net.ccbluex.liquidbounce.script.ScriptManager
 import net.ccbluex.liquidbounce.script.remapper.Remapper.loadSrg
@@ -49,6 +50,8 @@ object LiquidBounce {
     lateinit var scriptManager: ScriptManager
 
     lateinit var tipSoundManager: TipSoundManager
+
+    lateinit var combatManager: CombatManager
 
     // HUD & ClickGUI
     lateinit var hud: HUD
@@ -129,6 +132,10 @@ object LiquidBounce {
         // Set HUD
         hud = createDefault()
         fileManager.loadConfig(fileManager.hudConfig)
+
+        //register combat manager
+        combatManager = CombatManager()
+        eventManager.registerListener(combatManager)
 
         // Disable optifine fastrender
         //ClientUtils.disableFastRender()

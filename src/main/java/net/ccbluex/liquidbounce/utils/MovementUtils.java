@@ -63,6 +63,23 @@ public final class MovementUtils extends MinecraftInstance {
         mc.thePlayer.motionZ += Math.cos(yaw) * speed;
     }
 
+    private static double bps;
+    private static double lastX;
+    private static double lastY;
+    private static double lastZ;
+
+    public static void updateBlocksPerSecond() {
+        if (mc.thePlayer == null || mc.thePlayer.ticksExisted < 1) {
+            bps = 0.0D;
+        }
+
+        double distance = mc.thePlayer.getDistance(lastX, lastY, lastZ);
+        lastX = mc.thePlayer.posX;
+        lastY = mc.thePlayer.posY;
+        lastZ = mc.thePlayer.posZ;
+        bps = distance * (double)((float)20 * mc.timer.timerSpeed);
+    }
+
     public static void strafe() {
         strafe(getSpeed());
     }

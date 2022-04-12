@@ -10,6 +10,7 @@ import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.model.ModelPlayer
 import net.minecraft.client.multiplayer.WorldClient
 import net.minecraft.entity.Entity
+import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.network.Packet
 import net.minecraft.util.AxisAlignedBB
@@ -36,6 +37,7 @@ class BlockBBEvent(blockPos: BlockPos, val block: Block, var boundingBox: AxisAl
     val z = blockPos.z
 }
 
+class EntityKilledEvent(val targetEntity: EntityLivingBase) : Event()
 /**
  * Called when player clicks a block
  */
