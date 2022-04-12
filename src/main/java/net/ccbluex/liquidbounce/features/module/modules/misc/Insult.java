@@ -21,7 +21,9 @@ public class Insult extends Module {
     public void onKilled(EntityKilledEvent event) {
         EntityLivingBase target = event.getTargetEntity ();
         if (target instanceof EntityPlayer) {
-            mc.thePlayer.sendChatMessage(insult[RandomUtils.nextInt(0, insult.length)].replaceAll("%player%", target.getName()));
+            if (!target.getName ().equals ( mc.thePlayer.getName () )) {
+                mc.thePlayer.sendChatMessage ( insult[RandomUtils.nextInt ( 0, insult.length )].replaceAll ( "%player%", target.getName () ) );
+            }
         }
     }
 
