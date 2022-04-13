@@ -11,6 +11,7 @@ import net.ccbluex.liquidbounce.features.module.Module;
 import net.ccbluex.liquidbounce.features.module.ModuleCategory;
 import net.ccbluex.liquidbounce.features.module.ModuleInfo;
 import net.ccbluex.liquidbounce.ui.client.hud.element.elements.Notification;
+import net.ccbluex.liquidbounce.utils.ClientUtils;
 import net.ccbluex.liquidbounce.utils.MovementUtils;
 import net.ccbluex.liquidbounce.utils.render.RenderUtils;
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils;
@@ -77,7 +78,8 @@ public class Fly extends Module {
             "Collide",
 
             // Anjay by JoseMarcellio
-            "Anjay"
+            "Anjay",
+            "Anjay2"
 
     }, "Motion");
 
@@ -165,6 +167,13 @@ public class Fly extends Module {
 
     private double anjayTimes = 0;
 
+    private double vticks = 0;
+    private double startXX = 0.0;
+    private double startZZ = 0.0;
+    private double startYY = 0.0;
+    private boolean isSuccess = false;
+    private boolean doCancel = false;
+
     private void doMove(double h, double v) {
         if (mc.thePlayer == null) return;
 
@@ -207,6 +216,7 @@ public class Fly extends Module {
 
     @Override
     public void onEnable() {
+
         if(mc.thePlayer == null)
             return;
 
@@ -218,6 +228,13 @@ public class Fly extends Module {
 
         anjayTimer.reset();
         anjayTimes = 0;
+
+        vticks = 0;
+        startXX = 0.0;
+        startZZ = 0.0;
+        startYY = 0.0;
+        isSuccess = false;
+        doCancel = false;
 
         double x = mc.thePlayer.posX;
         double y = mc.thePlayer.posY;
@@ -313,6 +330,13 @@ public class Fly extends Module {
                 mc.thePlayer.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, true));
                 mc.thePlayer.jump();
                 break;
+            case "anjay2":
+                mc.timer.timerSpeed = 0.07777612F;
+                mc.thePlayer.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 3.42f, mc.thePlayer.posZ, false));
+                mc.thePlayer.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, false));
+                mc.thePlayer.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, true));
+                mc.thePlayer.jump();
+                break;
         }
 
         startY = mc.thePlayer.posY;
@@ -353,6 +377,11 @@ public class Fly extends Module {
         }
 
         if (boostTicks > 0 && mode.equalsIgnoreCase("Anjay")) {
+            mc.thePlayer.motionX = 0;
+            mc.thePlayer.motionZ = 0;
+        }
+
+        if (boostTicks > 0 && mode.equalsIgnoreCase("Anjay2")) {
             mc.thePlayer.motionX = 0;
             mc.thePlayer.motionZ = 0;
         }
@@ -603,6 +632,13 @@ public class Fly extends Module {
                 break;
             case "anjay":
                 MovementUtils.strafe ( 9.5F );
+                break;
+            case "anjay2":
+                double[] expectMoves = getMoves((double)clipH.get(), (double)clipV.get());
+                hClip(expectMoves[0], expectMoves[1], expectMoves[2]);
+                                    //mc.thePlayer.motionY += 0.00999D;
+                                    MovementUtils.strafe(MovementUtils.getSpeed() * 0.88F);
+                MovementUtils.strafe((float) Math.min(0.85, Math.max(0.25, MovementUtils.getSpeed() * 0.95878)));
                 break;
         }
     }
