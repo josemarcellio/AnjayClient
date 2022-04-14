@@ -5,14 +5,13 @@
  */
 package net.ccbluex.liquidbounce.features.module.modules.movement;
 
+import com.josemarcellio.packet.JosePacketEvent;
 import net.ccbluex.liquidbounce.LiquidBounce;
 import net.ccbluex.liquidbounce.event.*;
 import net.ccbluex.liquidbounce.features.module.Module;
 import net.ccbluex.liquidbounce.features.module.ModuleCategory;
 import net.ccbluex.liquidbounce.features.module.ModuleInfo;
-import net.ccbluex.liquidbounce.features.module.modules.combat.KillAura;
 import net.ccbluex.liquidbounce.ui.client.hud.element.elements.Notification;
-import net.ccbluex.liquidbounce.utils.ClientUtils;
 import net.ccbluex.liquidbounce.utils.MovementUtils;
 import net.ccbluex.liquidbounce.utils.render.RenderUtils;
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils;
@@ -332,11 +331,8 @@ public class Fly extends Module {
                 mc.thePlayer.jump();
                 break;
             case "anjay2":
-                //mc.thePlayer.setPosition(x, 0.2, z);
-               mc.timer.timerSpeed = 0.09777612F;
-                mc.thePlayer.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 3.42f, mc.thePlayer.posZ, false));
-                mc.thePlayer.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, false));
-                mc.thePlayer.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, true));
+               JosePacketEvent.setSpeed(0.09777612F);
+                JosePacketEvent.damageSelf();
                 mc.thePlayer.jump();
                 break;
         }
@@ -637,41 +633,25 @@ public class Fly extends Module {
                 break;
             case "anjay2":
                 anjayTimes++;
-                mc.effectRenderer.spawnEffectParticle(EnumParticleTypes.HEART.getParticleID(), mc.thePlayer.posX, mc.thePlayer.posY + 0.2D, mc.thePlayer.posZ, -mc.thePlayer.motionX, -0.5D, -mc.thePlayer.motionZ);
-                //mc.timer.timerSpeed = 0.2f;
-                if (anjayTimes >= 1) {
-                    //double[] expectMoves = getMoves((double)clipH.get(), (double)clipV.get());
-                    //hClip(expectMoves[0], expectMoves[1], expectMoves[2]);
-                    //hClip(1.3, 1.3, 1.3);
-                    mc.thePlayer.motionY += 0.00999D;
-                    MovementUtils.strafe(MovementUtils.getSpeed() * 0.88F);
-                    //MovementUtils.strafe((float) Math.min(0.85, Math.max(0.25, MovementUtils.getSpeed() * 0.95878)));
+                JosePacketEvent.particle("HEART");
+                if (anjayTimes < 1) {
+                    JosePacketEvent.motionY(0.00999D);
+                    JosePacketEvent.setMovement(JosePacketEvent.getSpeed() * 0.88F);
                 }
-                if (anjayTimes >= 2) {
-                    //mc.timer.timerSpeed = 0.2f;
-                    //double[] expectMoves = getMoves((double)clipH.get(), (double)clipV.get());
-                    //hClip(expectMoves[0], expectMoves[1], expectMoves[2]);
-                    mc.thePlayer.jumpMovementFactor = 0.09F;
-                    mc.thePlayer.motionY += 0.0132099999999999999999999999999;
-                    mc.thePlayer.jumpMovementFactor = 0.08F;
-                    mc.thePlayer.motionY = -0.5;
-                    //anjayTimes = 0;
+                else if (anjayTimes == 2) {
+                    JosePacketEvent.lagFlag(3);
+                    JosePacketEvent.sendPacket();
                 }
-                if (anjayTimes >= 3) {
-                    //mc.thePlayer.motionY += 0.15D;
-                    //mc.thePlayer.motionX *= 1.1D;
-                    //mc.thePlayer.motionZ *= 1.1D;
-                    mc.timer.timerSpeed = 0.1812334f;
-                    MovementUtils.strafe(9.5F);
-                    mc.thePlayer.motionY = -0.3;
+                else if (anjayTimes == 3) {
+                    JosePacketEvent.setSpeed(0.18f);
+                    JosePacketEvent.setMovement(9.5F);
+                    JosePacketEvent.motionY(0.3D);
                 }
-                if (anjayTimes >= 6) {
-                    mc.effectRenderer.spawnEffectParticle(EnumParticleTypes.EXPLOSION_HUGE.getParticleID(), mc.thePlayer.posX, mc.thePlayer.posY + 0.2D, mc.thePlayer.posZ, -mc.thePlayer.motionX, -0.5D, -mc.thePlayer.motionZ);
-                    //double[] expectMoves = getMoves((double)clipH.get(), (double)clipV.get());
-                    //hClip(expectMoves[0], expectMoves[1], expectMoves[2]);
-                    mc.thePlayer.motionY += 0.00999D;
-                    Module fly = LiquidBounce.INSTANCE.getModuleManager().get( Fly.class);
-                    fly.setState ( false );
+                else if (anjayTimes == 6) {
+                    JosePacketEvent.particle("EXPLOSION_HUGE");
+                    JosePacketEvent.motionY(0.00999D);
+                    JosePacketEvent.disable(Fly.class);
+                    JosePacketEvent.stopPacket();
                 }
                 break;
         }
