@@ -184,7 +184,8 @@ class ModuleManager : Listenable {
                 AutoPot::class.java,
                 AntiCheatDebugger::class.java,
                 Insult::class.java,
-            Injector::class.java
+            Injector::class.java,
+            LuckyAutoPlay::class.java
         )
 
         registerModule(Fucker)
