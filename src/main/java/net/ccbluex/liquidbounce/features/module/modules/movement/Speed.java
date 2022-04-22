@@ -92,6 +92,7 @@ public class Speed extends Module {
 
             new Anjay(),
             new Anjay2(),
+            new Anjay3(),
             new FuckSelf(),
             new Meme(),
             new Meme2()
@@ -179,7 +180,7 @@ public class Speed extends Module {
         }
     };
 
-    public final ListValue otherModeValue = new ListValue("Other-Mode", new String[]{"YPort", "YPort2", "Boost", "Frame", "MiJump", "OnGround", "SlowHop", "Jump", "Legit", "AEMine", "Anjay", "Anjay2", "FuckSelf", "Meme", "Meme2"}, "Boost", () -> { return typeValue.get().equalsIgnoreCase("other"); }) {
+    public final ListValue otherModeValue = new ListValue("Other-Mode", new String[]{"YPort", "YPort2", "Boost", "Frame", "MiJump", "OnGround", "SlowHop", "Jump", "Legit", "AEMine", "Anjay", "Anjay2", "Anjay3", "FuckSelf", "Meme", "Meme2"}, "Boost", () -> { return typeValue.get().equalsIgnoreCase("other"); }) {
 
         @Override
         protected void onChange(final String oldValue, final String newValue) {

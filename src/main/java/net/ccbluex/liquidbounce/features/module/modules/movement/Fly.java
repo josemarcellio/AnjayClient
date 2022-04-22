@@ -6,6 +6,7 @@
 package net.ccbluex.liquidbounce.features.module.modules.movement;
 
 import com.josemarcellio.packet.JosePacketEvent;
+import com.josemarcellio.utils.MathUtils;
 import net.ccbluex.liquidbounce.LiquidBounce;
 import net.ccbluex.liquidbounce.event.*;
 import net.ccbluex.liquidbounce.features.module.Module;
@@ -23,6 +24,8 @@ import net.ccbluex.liquidbounce.value.FloatValue;
 import net.ccbluex.liquidbounce.value.IntegerValue;
 import net.ccbluex.liquidbounce.value.ListValue;
 import net.minecraft.block.BlockAir;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.*;
 import net.minecraft.network.play.server.S08PacketPlayerPosLook;
@@ -79,7 +82,10 @@ public class Fly extends Module {
 
             // Anjay by JoseMarcellio
             "Anjay",
-            "Anjay2"
+            "Anjay2",
+            "Anjay3",
+            "Anjay4",
+            "Anjay5"
 
     }, "Motion");
 
@@ -174,6 +180,20 @@ public class Fly extends Module {
     private boolean isSuccess = false;
     private boolean doCancel = false;
 
+    private float stage;
+    private int ticks;
+    private boolean doFly;
+    private double x, y, z;
+    private ArrayList<Packet> packets = new ArrayList<>();
+    private boolean hasClipped;
+    private double speedStage;
+
+    private int movementTicks = 0;
+    private double speed;
+    private float pitch;
+    private int prevSlot, tickss = 0;
+    private boolean damagedBow;
+
     private void doMove(double h, double v) {
         if (mc.thePlayer == null) return;
 
@@ -216,7 +236,6 @@ public class Fly extends Module {
 
     @Override
     public void onEnable() {
-
         if(mc.thePlayer == null)
             return;
 
@@ -235,6 +254,16 @@ public class Fly extends Module {
         startYY = 0.0;
         isSuccess = false;
         doCancel = false;
+
+        doFly = false;
+        ticks = 0;
+        stage = 0;
+        x = mc.thePlayer.posX;
+        y = mc.thePlayer.posY;
+        z = mc.thePlayer.posZ;
+        hasClipped = false;
+        packets.clear();
+
 
         double x = mc.thePlayer.posX;
         double y = mc.thePlayer.posY;
@@ -383,6 +412,8 @@ public class Fly extends Module {
             mc.thePlayer.motionX = 0;
             mc.thePlayer.motionZ = 0;
         }
+
+
 
         mc.thePlayer.capabilities.isFlying = false;
 
@@ -661,38 +692,103 @@ public class Fly extends Module {
     public void onMotion(final MotionEvent event) {
         if (mc.thePlayer == null) return;
 
-        if (bobbingValue.get()) {
-            mc.thePlayer.cameraYaw = bobbingAmountValue.get();
-            mc.thePlayer.prevCameraYaw = bobbingAmountValue.get();
+        if (bobbingValue.get ()) {
+            mc.thePlayer.cameraYaw = bobbingAmountValue.get ();
+            mc.thePlayer.prevCameraYaw = bobbingAmountValue.get ();
         }
 
-        switch (modeValue.get().toLowerCase()) {
+        switch (modeValue.get ().toLowerCase ()) {
             case "funcraft":
-                event.setOnGround(true);
-                if (!MovementUtils.isMoving())
+                event.setOnGround ( true );
+                if (!MovementUtils.isMoving ())
                     moveSpeed = 0.25;
                 if (moveSpeed > 0.25) {
                     moveSpeed -= moveSpeed / 159.0;
                 }
-                if (event.getEventState() == EventState.PRE) {
+                if (event.getEventState () == EventState.PRE) {
                     mc.thePlayer.capabilities.isFlying = false;
                     mc.thePlayer.motionY = 0;
                     mc.thePlayer.motionX = 0;
                     mc.thePlayer.motionZ = 0;
 
-                    MovementUtils.strafe((float)moveSpeed);
-                    mc.thePlayer.setPosition(mc.thePlayer.posX, mc.thePlayer.posY - 8e-6, mc.thePlayer.posZ);
+                    MovementUtils.strafe ( (float) moveSpeed );
+                    mc.thePlayer.setPosition ( mc.thePlayer.posX, mc.thePlayer.posY - 8e-6, mc.thePlayer.posZ );
                 }
                 break;
             case "watchdog":
-                if (event.getEventState() == EventState.PRE)
+                if (event.getEventState () == EventState.PRE)
                     wdTick++;
                 break;
             case "watchdogtest":
-                if (event.getEventState() == EventState.POST && pulsiveTroll.get() && wdState >= 2 && mc.thePlayer.ticksExisted % 2 == 0)
-                    mc.getNetHandler().addToSendQueue(new C0CPacketInput(coerceAtMost(mc.thePlayer.moveStrafing, 0.98F), coerceAtMost(mc.thePlayer.moveForward, 0.98F), mc.thePlayer.movementInput.jump, mc.thePlayer.movementInput.sneak));
+                if (event.getEventState () == EventState.POST && pulsiveTroll.get () && wdState >= 2 && mc.thePlayer.ticksExisted % 2 == 0)
+                    mc.getNetHandler ().addToSendQueue ( new C0CPacketInput ( coerceAtMost ( mc.thePlayer.moveStrafing, 0.98F ), coerceAtMost ( mc.thePlayer.moveForward, 0.98F ), mc.thePlayer.movementInput.jump, mc.thePlayer.movementInput.sneak ) );
                 break;
+            case "anjay3":
+                mc.thePlayer.cameraYaw = mc.thePlayer.cameraPitch = 0.05f;
+                mc.thePlayer.posY = y;
+                if (mc.thePlayer.onGround && stage == 0) {
+                    mc.thePlayer.motionY = 0.09;
+                }
+                stage++;
+                if (mc.thePlayer.onGround && stage > 2 && !hasClipped) {
+                    mc.thePlayer.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY - 0.15, mc.thePlayer.posZ, false));
+                    mc.thePlayer.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.15, mc.thePlayer.posZ, true));
+                    hasClipped = true;
+                }
+                if (doFly) {
+                    mc.thePlayer.motionY = 0.09;
+                    mc.thePlayer.onGround = true;
+                    mc.timer.timerSpeed = 2;
+                } else {
+                    JosePacketEvent.setSpeed(0);
+                    mc.timer.timerSpeed = 5;
+                }
+                break;
+            case "anjay4":
+                mc.thePlayer.motionY = 0;
+                mc.thePlayer.onGround = true;
+                break;
+            case "anjay5":
+                if (MovementUtils.isMoving ()) {
+                    mc.thePlayer.motionY = 0.41;
+                }
+
+                switch (movementTicks) {
+                    case 1:
+                        speed = MovementUtils.getBaseMoveSpeed ();
+                        break;
+                    case 2:
+                        speed = MovementUtils.getBaseMoveSpeed () + (0.132535 * Math.random ());
+                        break;
+                    case 3:
+                        speed = MovementUtils.getBaseMoveSpeed () / 2;
+                        break;
+                }
+                JosePacketEvent.setSpeed ( 0.5F );
+                movementTicks++;
+        break;
         }
+    }
+
+    public int getBowSlot() {
+        for (int i = 0; i < 9; i++) {
+            ItemStack is = mc.thePlayer.inventory.getStackInSlot(i);
+            if (is != null && is.getItem() == Items.bow) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int getItemCount(Item item) {
+        int count = 0;
+        for (int i = 9; i < 45; i++) {
+            ItemStack stack = mc.thePlayer.inventoryContainer.getSlot(i).getStack();
+            if (stack != null && stack.getItem() == item) {
+                count += stack.stackSize;
+            }
+        }
+        return count;
     }
 
     public float coerceAtMost(double value, double max) {
@@ -817,6 +913,14 @@ public class Fly extends Module {
                     packetPlayer.y = startY;
                     if (fakeNoMoveValue.get())
                         packetPlayer.setMoving(false);
+                }
+            }
+
+            if (mode.equalsIgnoreCase("anjay3")) {
+                if (event.getPacket() instanceof S08PacketPlayerPosLook) {
+                    S08PacketPlayerPosLook s08 = (S08PacketPlayerPosLook) event.getPacket();
+                    y = s08.getY();
+                    doFly = true;
                 }
             }
         }

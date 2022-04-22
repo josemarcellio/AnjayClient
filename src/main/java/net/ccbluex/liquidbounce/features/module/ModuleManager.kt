@@ -5,6 +5,8 @@
  */
 package net.ccbluex.liquidbounce.features.module
 
+import com.josemarcellio.module.AntiTabComplete
+import com.josemarcellio.module.Extreme
 import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.KeyEvent
@@ -186,7 +188,11 @@ class ModuleManager : Listenable {
                 Insult::class.java,
             Injector::class.java,
             LuckyAutoPlay::class.java,
-            LegitFreeze::class.java
+            LegitFreeze::class.java,
+            AntiHaxe::class.java,
+            ResetViolation::class.java,
+            Extreme::class.java,
+            AntiTabComplete::class.java
         )
 
         registerModule(Fucker)

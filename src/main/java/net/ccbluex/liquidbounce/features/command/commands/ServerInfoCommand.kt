@@ -46,8 +46,8 @@ class ServerInfoCommand : Command("serverinfo", emptyArray()), Listenable {
         val packet = event.packet
 
         if (packet is C00Handshake) {
-            ip = packet.ip
-            port = packet.port
+            //ip = packet.ip
+           // port = packet.port
         }
     }
 
